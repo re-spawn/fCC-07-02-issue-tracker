@@ -1,7 +1,7 @@
 {
-	"name": "fcc-issue-tracker",
+	"name": "fCC-07-02-issue-tracker",
 	"version": "1.0.0",
-	"description": "Issue Tracker Boilerplate",
+	"description": "Issue Tracker",
 	"main": "server.js",
 	"scripts": {
 		"start": "node server.js",
@@ -18,7 +18,7 @@
 	},
 	"repository": {
 		"type": "git",
-		"url": "https://github.com/freeCodeCamp/boilerplate-project-issuetracker"
+		"url": "https://github.com/re-spawn/fCC-07-02-issue-tracker"
 	},
 	"keywords": [
 		"node",
