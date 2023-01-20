@@ -1,5 +1,8 @@
 'use strict';
 
+const IssuesDB = require('../issuesDB.js');
+let issuesDB = new IssuesDB;
+
 const fs = require('fs');
 const db = './db';
 
@@ -34,54 +37,13 @@ module.exports = function (app) {
     })
     
     .post(function (req, res){
-      // Projects DB
       let project = req.params.project;
-      if (fs.existsSync(db)) {
-        var projects = JSON.parse(fs.readFileSync(db));
+      let result = issuesDB.addIssue(project, req.body);
+      if (typeof result == 'string') {
+        res.status(400).send(result);
       } else {
-        var projects = [];
+        res.json(result);
       }
-      let projectIndex = projects.findIndex((element) => {
-        return element.project == project;
-      });
-      if (projectIndex == -1) {
-        projectIndex = projects.length;
-        projects.push({
-          "project": project,
-          "issues": []
-        });
-      }
-      // Required Fields
-      const issueTitle = req.body.issue_title;
-      const issueText = req.body.issue_text;
-      const createdBy = req.body.created_by;
-      if (issueTitle == undefined || issueTitle == '' ||
-          issueText == undefined || issueText == '' ||
-          createdBy == undefined || createdBy == '') {
-        res.sendStatus(400);
-        return;
-      }
-      // Optional Fields
-      const assignedTo = (req.body.assigned_to == undefined) ? "" : req.body.assigned_to;
-      const statusText = (req.body.status_text == undefined) ? "" : req.body.status_text;
-      let date = new Date();
-      // Issue
-      let issue = {
-        "_id": project + (projects[projectIndex].issues.length + 1),
-        "issue_title": issueTitle,
-        "issue_text": issueText,
-        "created_on": date.toUTCString(),
-        "updated_on": date.toUTCString(),
-        "created_by": createdBy,
-        "assigned_to": assignedTo,
-        "open": true,
-        "status_text": statusText,
-      };
-      projects[projectIndex].issues.push({...issue});
-      fs.writeFileSync(db, JSON.stringify(projects));
-      res.json({...issue});
-      console.log("POST: projects[projectIndex].project", projects[projectIndex].project);
-      console.log("POST: projects[projectIndex].issues", projects[projectIndex].issues);
     })
     
     .put(function (req, res){
@@ -96,7 +58,7 @@ module.exports = function (app) {
             "error": "could not update",
             "_id": req.body._id
           });
-          console.log("PUT: No issues for project " + project);
+          console.log("PUT: Project not in DB!");
         } else {
           let issueIndex = projects[projectIndex].issues.findIndex((issue) => {
             return issue._id == req.body._id;
@@ -106,6 +68,7 @@ module.exports = function (app) {
               "error": "could not update",
               "_id": req.body._id
             });
+            console.log("PUT: Issue does not exist");
           } else {
             Object.keys(req.body).forEach((key) => {
               if (req.body[key] == "") {
@@ -118,6 +81,7 @@ module.exports = function (app) {
                     "_id": req.body._id
                   });
                   console.log("PUT: Required field cannot be set to empty string");
+                  // NEED TO EXIT forEach LOOP HERE
                 } else {
                   projects[projectIndex].issues[issueIndex][key] = req.body[key];
                 }
@@ -127,16 +91,19 @@ module.exports = function (app) {
                   "_id": req.body._id
                 });
                 console.log("PUT: Open must be boolean");
+                // NEED TO EXIT forEach LOOP HERE
               } else {
                 projects[projectIndex].issues[issueIndex][key] = req.body[key];
               }
             });
+            // NEED TO UPDATE updated_on HERE
+            fs.writeFileSync(db, JSON.stringify(projects));
+            res.json({
+              "result": "successfully updated",
+              "_id": req.body._id
+            });
+            console.log("PUT: Updated issue", projects[projectIndex].issues[issueIndex]);
           }
-          res.json({
-            "result": "successfully updated",
-            "_id": req.body._id
-          });
-          console.log("PUT: updated issue", projects[projectIndex].issues[issueIndex]);
         }
       } else {
         res.json({

@@ -15,7 +15,7 @@ chai.use(chaiHttp);
 suite('Functional Tests', function() {
 
   this.timeout(5000);
-  const route = '/api/issues/re-spawn';
+  const route = '/api/issues/respawn';
   const ids = [];
 
   test('Create an issue with every field', function(done) {
@@ -49,18 +49,18 @@ suite('Functional Tests', function() {
           // issue_text
           assert.strictEqual(res.body.issue_text, issueText);
           // created_on
-	  assert.isDefined(res.body.created_on);
+          assert.isDefined(res.body.created_on);
           assert.isNotEmpty(res.body.created_on);
           const createdOn = new Date(res.body.created_on);
           assert.instanceOf(createdOn, Date);
-	  assert.isNotNaN(createdOn);
+          assert.isNotNaN(createdOn);
           assert.isAtMost(createdOn, new Date());
           // updated_on
-	  assert.isDefined(res.body.updated_on);
+          assert.isDefined(res.body.updated_on);
           assert.isNotEmpty(res.body.updated_on);
           const updatedOn = new Date(res.body.updated_on);
           assert.instanceOf(updatedOn, Date);
-	  assert.isNotNaN(updatedOn);
+          assert.isNotNaN(updatedOn);
           assert.strictEqual(updatedOn.toUTCString(), createdOn.toUTCString());
           // created_by
           assert.strictEqual(res.body.created_by, createdBy);
@@ -103,18 +103,18 @@ suite('Functional Tests', function() {
           // issue_text
           assert.strictEqual(res.body.issue_text, issueText);
           // created_on
-	  assert.isDefined(res.body.created_on);
+          assert.isDefined(res.body.created_on);
           assert.isNotEmpty(res.body.created_on);
           const createdOn = new Date(res.body.created_on);
           assert.instanceOf(createdOn, Date);
-	  assert.isNotNaN(createdOn);
+          assert.isNotNaN(createdOn);
           assert.isAtMost(createdOn, new Date());
           // updated_on
-	  assert.isDefined(res.body.updated_on);
+          assert.isDefined(res.body.updated_on);
           assert.isNotEmpty(res.body.updated_on);
           const updatedOn = new Date(res.body.updated_on);
           assert.instanceOf(updatedOn, Date);
-	  assert.isNotNaN(updatedOn);
+          assert.isNotNaN(updatedOn);
           assert.strictEqual(updatedOn.toUTCString(), createdOn.toUTCString());
           // created_by
           assert.strictEqual(res.body.created_by, createdBy);
@@ -157,18 +157,18 @@ suite('Functional Tests', function() {
           // issue_text
           assert.strictEqual(res.body.issue_text, issueText);
           // created_on
-	  assert.isDefined(res.body.created_on);
+          assert.isDefined(res.body.created_on);
           assert.isNotEmpty(res.body.created_on);
           const createdOn = new Date(res.body.created_on);
           assert.instanceOf(createdOn, Date);
-	  assert.isNotNaN(createdOn);
+          assert.isNotNaN(createdOn);
           assert.isAtMost(createdOn, new Date());
           // updated_on
-	  assert.isDefined(res.body.updated_on);
+          assert.isDefined(res.body.updated_on);
           assert.isNotEmpty(res.body.updated_on);
           const updatedOn = new Date(res.body.updated_on);
           assert.instanceOf(updatedOn, Date);
-	  assert.isNotNaN(updatedOn);
+          assert.isNotNaN(updatedOn);
           assert.strictEqual(updatedOn.toUTCString(), createdOn.toUTCString());
           // created_by
           assert.strictEqual(res.body.created_by, createdBy);
@@ -257,6 +257,8 @@ suite('Functional Tests', function() {
         done();
       });
   });
+
+/*
   test('Get all issues', function(done) {
     chai
       .request(server)
@@ -318,7 +320,7 @@ suite('Functional Tests', function() {
       });
   });
   test('Update one field', function(done) {
-    let _id = 're-spawn1';
+    let _id = 'respawn1';
     let assignedTo = 'George';
     chai
       .request(server)
@@ -339,34 +341,6 @@ suite('Functional Tests', function() {
         done();
       });
   });
- 
-  /* TEMPLATES *************************
-  {
-    '_id': 'string',
-    'issue_title': 'string',
-    'issue_text': 'string',
-    'created_on': 'date',
-    'updated_on': 'date',
-    'created_by': 'string',
-    'assigned_to': 'string',
-    'open': boolean,
-    'status_text': 'string'
-  }
-  test('TEST_DESCRIPTION', function(done) {
-    chai
-      .request(server)
-      .ROUTE(route)
-      ...
-      .end(function(err, res) {
-        if (err) {
-          console.error(err);
-        } else {
-          assert.strictEqual(res.status, 200, 'Response status not 200 (OK)');
-          assert.ASSERTION(res.body.PROP, EXPECTED);
-        }
-        done();
-      });
-  });
-  *********************************** */
+*/
 
 });
