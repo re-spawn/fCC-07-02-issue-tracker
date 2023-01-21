@@ -1,7 +1,7 @@
 const chai = require('chai');
 let assert = chai.assert;
-const IssuesDB = require('../issuesDB.js');
-let db = new IssuesDB();
+const DB = require('../db.js');
+let db = new DB();
 
 suite('Unit Tests', function() {
 
@@ -61,7 +61,7 @@ suite('Unit Tests', function() {
     });
   });
 
-  suite('addIssue', function() {
+  suite('addIssue & updateIssue', function() {
     test('Reset database and add issue with every field', function() {
       db.reset();
       let project = 'respawn';
@@ -107,7 +107,45 @@ suite('Unit Tests', function() {
       // status_text
       assert.strictEqual(issue.status_text, statusText);
     });
+    test('Update issue without providing _id (nonsensical)', function() {
+      let project = 'respawn';
+      let issueId = 'respawn1';
+      let issueTitle = 'respawn1 Title UPDATED';
+      let issue = {
+        "issue_title": issueTitle
+      };
+      let error = db.updateIssue(project, issue);
+      assert.strictEqual(error, 'missing _id');
+    });
+    test('Update issue without providing any update fields', function() {
+      let project = 'respawn';
+      let issueId = 'respawn1';
+      let issueTitle = 'respawn1 Title UPDATED';
+      let issue = {
+        "_id": issueId
+      };
+      let error = db.updateIssue(project, issue);
+      assert.strictEqual(error, 'no update field(s) sent');
+    });
+    test('Update issue_title', function() {
+      let project = 'respawn';
+      let issueId = 'respawn1';
+      let issueTitle = 'respawn1 Title UPDATED';
+      let issue = {
+        "_id": issueId,
+        "issue_title": issueTitle
+      };
+      let result = db.updateIssue(project, issue);
+      assert.strictEqual(result, 'successfully updated');
+      let issues = db.getIssues(project);
+      let issueIndex = issues.findIndex((element) => {
+        return element._id == issueId;
+      });
+      assert.strictEqual(issues[issueIndex].issue_title, issueTitle);
+    });
+
   });
+
 
 });
 

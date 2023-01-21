@@ -202,7 +202,8 @@ suite('Functional Tests', function() {
         if (err) {
           console.error(err);
         } else {
-          assert.strictEqual(res.status, 400, 'Response status not 400 (Bad Request)');
+          // assert.strictEqual(res.status, 400, 'Response status not 400 (Bad Request)');
+          assert.deepEqual(res.body, { "error": "required field(s) missing" });
         }
         done();
       });
@@ -227,7 +228,8 @@ suite('Functional Tests', function() {
         if (err) {
           console.error(err);
         } else {
-          assert.strictEqual(res.status, 400, 'Response status not 400 (Bad Request)');
+          // assert.strictEqual(res.status, 400, 'Response status not 400 (Bad Request)');
+          assert.deepEqual(res.body, { "error": "required field(s) missing" });
         }
         done();
       });
@@ -252,13 +254,12 @@ suite('Functional Tests', function() {
         if (err) {
           console.error(err);
         } else {
-          assert.strictEqual(res.status, 400, 'Response status not 400 (Bad Request)');
+          // assert.strictEqual(res.status, 400, 'Response status not 400 (Bad Request)');
+          assert.deepEqual(res.body, { "error": "required field(s) missing" });
         }
         done();
       });
   });
-
-/*
   test('Get all issues', function(done) {
     chai
       .request(server)
@@ -272,7 +273,7 @@ suite('Functional Tests', function() {
           for (let id = 0; id < ids.length; id++) {
             let issueIndex = res.body.findIndex((element) => {
               return element._id == ids[id];
-	    });
+            });
             assert.notEqual(issueIndex, -1);
           }
         }
@@ -341,6 +342,5 @@ suite('Functional Tests', function() {
         done();
       });
   });
-*/
 
 });
