@@ -1,11 +1,11 @@
 const fs = require('fs');
-const DB = './db';
+const PATH = './db';
 
-function IssuesDB() {
+function DB() {
 
   this.reset = function() {
-    if (fs.existsSync(DB)) {
-      fs.rmSync(DB);
+    if (fs.existsSync(PATH)) {
+      fs.rmSync(PATH);
     } 
   };
 
@@ -13,18 +13,18 @@ function IssuesDB() {
     // returns project object or error string
     let result;
     let projects, projectIndex;
-    if (fs.existsSync(DB)) {
-      projects = JSON.parse(fs.readFileSync(DB));
+    if (fs.existsSync(PATH)) {
+      projects = JSON.parse(fs.readFileSync(PATH));
       projectIndex = projects.findIndex((element) => {
         return element.project == project;
       });
       if (projectIndex == -1) {
-        result = 'no such project'; // project not in DB
+        result = 'no such project'; // project not in PATH
       } else {
         result = projects[projectIndex];
       }
     } else {
-      result = 'no such project'; // no DB
+      result = 'no such project'; // no PATH
     }
     return result;
   };
@@ -36,8 +36,8 @@ function IssuesDB() {
     if (this.getProject(project) != 'no such project') {
       result = 'project already exists';
     } else {
-      if (fs.existsSync(DB)) {
-        projects = JSON.parse(fs.readFileSync(DB));
+      if (fs.existsSync(PATH)) {
+        projects = JSON.parse(fs.readFileSync(PATH));
       } else {
         projects = [];
       }
@@ -45,13 +45,13 @@ function IssuesDB() {
         "project": project,
         "issues": []
       });
-      fs.writeFileSync(DB, JSON.stringify(projects));
+      fs.writeFileSync(PATH, JSON.stringify(projects));
       result = projects[projects.length - 1];
     }
     return result;
   };
     
-  // intended to be private to IssuesDB
+  // intended to be private to DB
   // called by this.addIssue & this.updateIssue
   this.updateProject = function(project, issues) {
     // returns project object or error string
@@ -60,12 +60,12 @@ function IssuesDB() {
     if (this.getProject(project) == 'no such project') {
       result = 'no such project';
     } else {
-      projects = JSON.parse(fs.readFileSync(DB));
+      projects = JSON.parse(fs.readFileSync(PATH));
       projectIndex = projects.findIndex((element) => {
         return element.project == project;
       });
       projects[projectIndex].issues = issues;
-      fs.writeFileSync(DB, JSON.stringify(projects));
+      fs.writeFileSync(PATH, JSON.stringify(projects));
       result = projects[projectIndex];
     }
     return result;
@@ -157,4 +157,4 @@ function IssuesDB() {
 
 };
 
-module.exports = IssuesDB;
+module.exports = DB;
