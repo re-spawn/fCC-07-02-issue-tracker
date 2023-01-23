@@ -141,15 +141,29 @@ function DB() {
       return 'could not update'; // no such issue
     }
     let issueObj = issues[issueIndex];
+    let result = "";
     keys.forEach((key) => {
-      if (['issue_title', 'issue_text', 'created_by', 'open'].includes(key) && issue[key] == "") {
-        return 'could not update'; // required field(s) missing
+      if (['issue_title', 'issue_text', 'created_by', 'open'].includes(key) && issue[key] === "") {
+        result = 'could not update'; // required field(s) missing
+      } else if (['created_on', 'updated_on'].includes(key)) {
+        result = 'could not update'; // cannot directly set timestamps
+      } else if (key == 'open' && typeof issue[key] != 'boolean') {
+        if (issue[key] == 'true') {
+          issueObj[key] = true;
+        } else if (issue[key] == 'false') {
+          issueObj[key] = false;
+        } else {
+          result = 'could not update'; // open not booleany
+        }
+      } else {
+        issueObj[key] = issue[key];
       }
-      if (key == 'open' && typeof issue[key] != 'boolean') {
-        return 'could not update'; // open not boolean
-      }
-      issueObj[key] = issue[key];
     });
+    if (result != "") {
+      return result;
+    }
+    let date = new Date();
+    issueObj.updated_on = date.toUTCString();
     issues[issueIndex] = issueObj;
     this.updateProject(project, issues);
     return 'successfully updated';

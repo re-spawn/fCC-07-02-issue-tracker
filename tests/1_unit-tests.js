@@ -59,6 +59,7 @@ suite('Unit Tests', function() {
       let issues = db.getIssues('Number Two');
       assert.strictEqual(issues, 'no such project');
     });
+    // see functional tests for additional cases
   });
 
   suite('addIssue & updateIssue', function() {
@@ -130,7 +131,7 @@ suite('Unit Tests', function() {
     test('Update issue_title', function() {
       let project = 'respawn';
       let issueId = 'respawn1';
-      let issueTitle = 'respawn1 Title UPDATED';
+      let issueTitle = 'respawn1 UPDATED TITLE';
       let issue = {
         "_id": issueId,
         "issue_title": issueTitle
@@ -141,7 +142,61 @@ suite('Unit Tests', function() {
       let issueIndex = issues.findIndex((element) => {
         return element._id == issueId;
       });
-      assert.strictEqual(issues[issueIndex].issue_title, issueTitle);
+      let updatedIssue = issues[issueIndex];
+      // issue_title
+      assert.strictEqual(updatedIssue.issue_title, issueTitle);
+      // created_on
+      assert.isDefined(updatedIssue.created_on);
+      assert.isNotEmpty(updatedIssue.created_on);
+      const createdOn = new Date(updatedIssue.created_on);
+      assert.instanceOf(createdOn, Date);
+      assert.isNotNaN(createdOn);
+      // updated_on
+      assert.isDefined(updatedIssue.updated_on);
+      assert.isNotEmpty(updatedIssue.updated_on);
+      const updatedOn = new Date(updatedIssue.updated_on);
+      assert.instanceOf(updatedOn, Date);
+      assert.isNotNaN(updatedOn);
+      assert.isAtLeast(updatedOn, createdOn);
+    });
+    test('Update issue_text, open & status_text', function() {
+      let project = 'respawn';
+      let issueId = 'respawn1';
+      let issueText = 'respawn1 UPDATED TEXT';
+      let isOpen = false;
+      let statusText = 'CLOSED';
+      let issue = {
+        "_id": issueId,
+        "issue_text": issueText,
+        "open": isOpen,
+        "status_text": statusText
+      };
+      let result = db.updateIssue(project, issue);
+      assert.strictEqual(result, 'successfully updated');
+      let issues = db.getIssues(project);
+      let issueIndex = issues.findIndex((element) => {
+        return element._id == issueId;
+      });
+      let updatedIssue = issues[issueIndex];
+      // issue_text
+      assert.strictEqual(updatedIssue.issue_text, issueText);
+      // created_on
+      assert.isDefined(updatedIssue.created_on);
+      assert.isNotEmpty(updatedIssue.created_on);
+      const createdOn = new Date(updatedIssue.created_on);
+      assert.instanceOf(createdOn, Date);
+      assert.isNotNaN(createdOn);
+      // updated_on
+      assert.isDefined(updatedIssue.updated_on);
+      assert.isNotEmpty(updatedIssue.updated_on);
+      const updatedOn = new Date(updatedIssue.updated_on);
+      assert.instanceOf(updatedOn, Date);
+      assert.isNotNaN(updatedOn);
+      assert.isAtLeast(updatedOn, createdOn);
+      // open
+      assert.strictEqual(updatedIssue.open, isOpen);
+      // status_text
+      assert.strictEqual(updatedIssue.status_text, statusText);
     });
 
   });

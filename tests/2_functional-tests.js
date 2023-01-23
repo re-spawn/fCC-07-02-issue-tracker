@@ -321,14 +321,14 @@ suite('Functional Tests', function() {
       });
   });
   test('Update one field', function(done) {
-    let _id = 'respawn1';
+    let issueId = 'respawn1';
     let assignedTo = 'George';
     chai
       .request(server)
       .put(route)
       .type('form')
       .send({
-        '_id': _id,
+        '_id': issueId,
         'assigned_to': assignedTo
       })
       .end(function(err, res) {
@@ -337,10 +337,128 @@ suite('Functional Tests', function() {
         } else {
           assert.strictEqual(res.status, 200, 'Response status not 200 (OK)');
           assert.strictEqual(res.body.result, 'successfully updated');
-          assert.strictEqual(res.body._id, _id);
+          assert.strictEqual(res.body._id, issueId);
+        }
+        done();
+      });
+  });
+  test('Update multiple fields', function(done) {
+    let issueId = 'respawn1';
+    let assignedTo = 'Henry';
+    let isOpen = false;
+    let statusText = 'George could not figure it out';
+    chai
+      .request(server)
+      .put(route)
+      .type('form')
+      .send({
+        '_id': issueId,
+        'assigned_to': assignedTo,
+        'open': isOpen,
+        'status_text': statusText
+      })
+      .end(function(err, res) {
+        if (err) {
+          console.error(err);
+        } else {
+         assert.strictEqual(res.status, 200, 'Response status not 200 (OK)');
+         assert.strictEqual(res.body.result, 'successfully updated');
+         assert.strictEqual(res.body._id, issueId);
+        }
+        done();
+      });
+  });
+  test('Update with empty _id', function(done) {
+    let issueId = '';
+    let assignedTo = 'Max';
+    chai
+      .request(server)
+      .put(route)
+      .type('form')
+      .send({
+        '_id': issueId,
+        'assigned_to': assignedTo,
+      })
+      .end(function(err, res) {
+        if (err) {
+          console.error(err);
+        } else {
+         assert.strictEqual(res.status, 200, 'Response status not 200 (OK)');
+         assert.strictEqual(res.body.error, 'missing _id');
+        }
+        done();
+      });
+  });
+  test('Update with missing _id', function(done) {
+    let assignedTo = 'Max';
+    chai
+      .request(server)
+      .put(route)
+      .type('form')
+      .send({
+        'assigned_to': assignedTo,
+      })
+      .end(function(err, res) {
+        if (err) {
+          console.error(err);
+        } else {
+         assert.strictEqual(res.status, 200, 'Response status not 200 (OK)');
+         assert.strictEqual(res.body.error, 'missing _id');
+        }
+        done();
+      });
+  });
+  test('Update with missing update fields', function(done) {
+    let issueId = 'respawn1';
+    chai
+      .request(server)
+      .put(route)
+      .type('form')
+      .send({
+        '_id': issueId
+      })
+      .end(function(err, res) {
+        if (err) {
+          console.error(err);
+        } else {
+         assert.strictEqual(res.status, 200, 'Response status not 200 (OK)');
+         assert.strictEqual(res.body.error, 'no update field(s) sent');
+        }
+        done();
+      });
+  });
+  test('Update with invalid _id', function(done) {
+    let issueId = 'INVALID';
+    let assignedTo = 'Max';
+    chai
+      .request(server)
+      .put(route)
+      .type('form')
+      .send({
+        '_id': issueId,
+        'assigned_to': assignedTo
+      })
+      .end(function(err, res) {
+        if (err) {
+          console.error(err);
+        } else {
+         assert.strictEqual(res.status, 200, 'Response status not 200 (OK)');
+         assert.strictEqual(res.body.error, 'could not update');
         }
         done();
       });
   });
 
 });
+
+/*
+        "_id": 'string',
+        "issue_title": 'string',
+        "issue_text": 'string',
+        "created_on": 'date',
+        "updated_on": 'date',
+        "created_by": 'string',
+        "assigned_to": 'string',
+        'open": boolean,
+        "status_text": 'string'
+*/

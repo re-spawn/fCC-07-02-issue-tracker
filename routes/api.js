@@ -44,7 +44,7 @@ module.exports = function (app) {
             "_id": req.body._id
           });
           break;
-        case 'missing id':
+        case 'missing _id':
           res.json({
             "error": result
           });
