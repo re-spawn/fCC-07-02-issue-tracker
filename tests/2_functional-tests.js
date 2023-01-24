@@ -61,7 +61,7 @@ suite('Functional Tests', function() {
           const updatedOn = new Date(res.body.updated_on);
           assert.instanceOf(updatedOn, Date);
           assert.isNotNaN(updatedOn);
-          assert.strictEqual(updatedOn.toUTCString(), createdOn.toUTCString());
+          assert.strictEqual(updatedOn.toISOString(), createdOn.toISOString());
           // created_by
           assert.strictEqual(res.body.created_by, createdBy);
           // assigned_to
@@ -115,7 +115,7 @@ suite('Functional Tests', function() {
           const updatedOn = new Date(res.body.updated_on);
           assert.instanceOf(updatedOn, Date);
           assert.isNotNaN(updatedOn);
-          assert.strictEqual(updatedOn.toUTCString(), createdOn.toUTCString());
+          assert.strictEqual(updatedOn.toISOString(), createdOn.toISOString());
           // created_by
           assert.strictEqual(res.body.created_by, createdBy);
           // assigned_to
@@ -169,7 +169,7 @@ suite('Functional Tests', function() {
           const updatedOn = new Date(res.body.updated_on);
           assert.instanceOf(updatedOn, Date);
           assert.isNotNaN(updatedOn);
-          assert.strictEqual(updatedOn.toUTCString(), createdOn.toUTCString());
+          assert.strictEqual(updatedOn.toISOString(), createdOn.toISOString());
           // created_by
           assert.strictEqual(res.body.created_by, createdBy);
           // assigned_to
@@ -361,9 +361,9 @@ suite('Functional Tests', function() {
         if (err) {
           console.error(err);
         } else {
-         assert.strictEqual(res.status, 200, 'Response status not 200 (OK)');
-         assert.strictEqual(res.body.result, 'successfully updated');
-         assert.strictEqual(res.body._id, issueId);
+          assert.strictEqual(res.status, 200, 'Response status not 200 (OK)');
+          assert.strictEqual(res.body.result, 'successfully updated');
+          assert.strictEqual(res.body._id, issueId);
         }
         done();
       });
@@ -383,8 +383,8 @@ suite('Functional Tests', function() {
         if (err) {
           console.error(err);
         } else {
-         assert.strictEqual(res.status, 200, 'Response status not 200 (OK)');
-         assert.strictEqual(res.body.error, 'missing _id');
+          assert.strictEqual(res.status, 200, 'Response status not 200 (OK)');
+          assert.strictEqual(res.body.error, 'missing _id');
         }
         done();
       });
@@ -402,8 +402,8 @@ suite('Functional Tests', function() {
         if (err) {
           console.error(err);
         } else {
-         assert.strictEqual(res.status, 200, 'Response status not 200 (OK)');
-         assert.strictEqual(res.body.error, 'missing _id');
+          assert.strictEqual(res.status, 200, 'Response status not 200 (OK)');
+          assert.strictEqual(res.body.error, 'missing _id');
         }
         done();
       });
@@ -421,8 +421,8 @@ suite('Functional Tests', function() {
         if (err) {
           console.error(err);
         } else {
-         assert.strictEqual(res.status, 200, 'Response status not 200 (OK)');
-         assert.strictEqual(res.body.error, 'no update field(s) sent');
+          assert.strictEqual(res.status, 200, 'Response status not 200 (OK)');
+          assert.strictEqual(res.body.error, 'no update field(s) sent');
         }
         done();
       });
@@ -442,23 +442,67 @@ suite('Functional Tests', function() {
         if (err) {
           console.error(err);
         } else {
-         assert.strictEqual(res.status, 200, 'Response status not 200 (OK)');
-         assert.strictEqual(res.body.error, 'could not update');
+          assert.strictEqual(res.status, 200, 'Response status not 200 (OK)');
+          assert.strictEqual(res.body.error, 'could not update');
+        }
+        done();
+      });
+  });
+  test('Delete', function(done) {
+    let issueId = 'respawn1';
+    chai
+      .request(server)
+      .delete(route)
+      .type('form')
+      .send({
+        '_id': issueId
+      })
+      .end(function(err, res) {
+        if (err) {
+          console.error(err);
+        } else {
+          assert.strictEqual(res.status, 200, 'Response status not 200 (OK)');
+          assert.strictEqual(res.body.result, 'successfully deleted');
+          assert.strictEqual(res.body._id, issueId);
+        }
+        done();
+      });
+  });
+  test('Delete with invalid _id', function(done) {
+    let issueId = 'INVALID';
+    chai
+      .request(server)
+      .delete(route)
+      .type('form')
+      .send({
+        '_id': issueId
+      })
+      .end(function(err, res) {
+        if (err) {
+          console.error(err);
+        } else {
+          assert.strictEqual(res.status, 200, 'Response status not 200 (OK)');
+          assert.strictEqual(res.body.error, 'could not delete');
+          assert.strictEqual(res.body._id, issueId);
+        }
+        done();
+      });
+  });
+  test('Delete with missing _id', function(done) {
+    chai
+      .request(server)
+      .delete(route)
+      .type('form')
+      .send({})
+      .end(function(err, res) {
+        if (err) {
+          console.error(err);
+        } else {
+          assert.strictEqual(res.status, 200, 'Response status not 200 (OK)');
+          assert.strictEqual(res.body.error, 'missing _id');
         }
         done();
       });
   });
 
 });
-
-/*
-        "_id": 'string',
-        "issue_title": 'string',
-        "issue_text": 'string',
-        "created_on": 'date',
-        "updated_on": 'date',
-        "created_by": 'string',
-        "assigned_to": 'string',
-        'open": boolean,
-        "status_text": 'string'
-*/

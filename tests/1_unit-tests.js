@@ -98,7 +98,7 @@ suite('Unit Tests', function() {
       const updatedOn = new Date(issue.updated_on);
       assert.instanceOf(updatedOn, Date);
       assert.isNotNaN(updatedOn);
-      assert.strictEqual(updatedOn.toUTCString(), createdOn.toUTCString());
+      assert.strictEqual(updatedOn.toISOString(), createdOn.toISOString());
       // created_by
       assert.strictEqual(issue.created_by, createdBy);
       // assigned_to
@@ -198,20 +198,26 @@ suite('Unit Tests', function() {
       // status_text
       assert.strictEqual(updatedIssue.status_text, statusText);
     });
-
   });
 
+  suite('deleteIssue', function() {
+    test('Delete issue', function() {
+      let project = 'respawn';
+      let issueId = 'respawn1';
+      let issue = {
+        "_id": issueId
+      };
+      let result = db.deleteIssue(project, issue);
+      assert.strictEqual(result, 'successfully deleted');
+      result = db.deleteIssue(project, issue);
+      assert.strictEqual(result, 'could not delete'); // already deleted
+    });
+    test('Delete issue without providing _id (nonsensical)', function() {
+      let project = 'respawn';
+      let issue = {};
+      let result = db.deleteIssue(project, issue);
+      assert.strictEqual(result, 'missing _id');
+    });
+  });
 
 });
-
-/*
-        "_id": 'string',
-        "issue_title": 'string',
-        "issue_text": 'string',
-        "created_on": 'date',
-        "updated_on": 'date',
-        "created_by": 'string',
-        "assigned_to": 'string',
-        'open": boolean,
-        "status_text": 'string'
-*/

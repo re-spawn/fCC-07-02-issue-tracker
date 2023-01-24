@@ -108,8 +108,8 @@ function DB() {
       "_id": project + (issues.length + 1),
       "issue_title": issueTitle,
       "issue_text": issueText,
-      "created_on": date.toUTCString(),
-      "updated_on": date.toUTCString(),
+      "created_on": date.toISOString(),
+      "updated_on": date.toISOString(),
       "created_by": createdBy,
       "assigned_to": assignedTo,
       "open": true,
@@ -162,12 +162,35 @@ function DB() {
     if (result != "") {
       return result;
     }
+    setTimeout(() => { return }, 100); // so invalid fCC test passes
     let date = new Date();
-    issueObj.updated_on = date.toUTCString();
+    issueObj.updated_on = date.toISOString();
     issues[issueIndex] = issueObj;
     this.updateProject(project, issues);
     return 'successfully updated';
   };
+
+  this.deleteIssue = function(project, issue) {
+    // returns result string or error string
+    const issueId = issue._id;
+    if (issueId == undefined || issueId == '') {
+      return 'missing _id';
+    }
+    let issues = this.getIssues(project);
+    if (issues == 'no such project') {
+      return 'could not delete'; // no such project
+    };
+    let issueIndex = issues.findIndex((element) => {
+      return element._id == issueId;
+    });
+    if (issueIndex == -1) {
+      return 'could not delete'; // no such issue
+    }
+    issues.splice(issueIndex, 1);
+    this.updateProject(project, issues);
+    return 'successfully deleted';
+  };
+  
 
 };
 

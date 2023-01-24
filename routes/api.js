@@ -9,9 +9,13 @@ module.exports = function (app) {
   
     .get(function (req, res){
       let project = req.params.project;
+      console.log("GET");
+      console.log("project =", project);
+      console.log("req.body =", req.body);
       let issues = db.getIssues(project);
       if (typeof issues == 'string') { // no such project
         // res.status(400);
+        console.log("issues =", issues);
         res.json([]);
       } else {
         Object.keys(req.query).forEach((key) => {
@@ -19,6 +23,7 @@ module.exports = function (app) {
             return issue[key] == req.query[key];
           });
         });
+        console.log("issues =", issues);
         res.json(issues);
       }
     })
@@ -36,7 +41,11 @@ module.exports = function (app) {
     
     .put(function (req, res){
       let project = req.params.project;
+      console.log("PUT");
+      console.log("project =", project);
+      console.log("req.body =", req.body);
       let result = db.updateIssue(project, req.body);
+      console.log("result =", result);
       switch(result) {
         case 'successfully updated':
           res.json({
@@ -59,7 +68,25 @@ module.exports = function (app) {
     
     .delete(function (req, res){
       let project = req.params.project;
-      
+      let result = db.deleteIssue(project, req.body);
+      switch(result) {
+        case 'successfully deleted':
+          res.json({
+            "result": result,
+            "_id": req.body._id
+          });
+          break;
+        case 'missing _id':
+          res.json({
+            "error": result
+          });
+          break;
+        default:
+          res.json({
+            "error": result,
+            "_id": req.body._id
+          });
+      }
     });
 
 };
